@@ -11,34 +11,32 @@ import com.dhemery.ancestors.Family;
 import com.dhemery.ancestors.Name;
 import com.dhemery.ancestors.Person;
 
-public class GedcomPerson implements Person{
-	private final Map<String, Family> families;
-	private final String xref;
-	private final Collection<String> familiesWhereChild;
-	private final Collection<String> familiesWhereSpouse;
+public class GedcomPerson implements Person {
+	private final Map<Integer, Family> families;
+	private final int id;
+	private final Collection<Integer> familiesWhereChild;
+	private final Collection<Integer> familiesWhereSpouse;
 	private final Name name;
 
-	public GedcomPerson(Individual individual, Map<String, Family> families) {
+	public GedcomPerson(Individual individual, Map<Integer, Person> people, Map<Integer, Family> families) {
 		this.families = families;
-		xref = individual.xref;
+		id = GedcomID.parse(individual.xref);
 		familiesWhereChild = individual.familiesWhereChild.stream()
 			.map(childFamily -> childFamily.family)
 			.map(family -> family.xref)
+			.map(GedcomID::parse)
 			.collect(toSet());
 		familiesWhereSpouse = individual.familiesWhereSpouse.stream()
 			.map(spousalFamily -> spousalFamily.family)
 			.map(family -> family.xref)
+			.map(GedcomID::parse)
 			.collect(toSet());
 		name = individual.names.stream()
 			.findFirst()
-			.map(name -> new GedcomName(name)).get();
+			.map(GedcomName::new).get();
+		people.put(id, this);
 	}
 
-	@Override
-	public String xref() {
-		return xref;
-	}
-	
 	@Override
 	public Name name() {
 		return name;
@@ -47,24 +45,25 @@ public class GedcomPerson implements Person{
 	@Override
 	public Collection<Family> familiesWhereChild() {
 		return familiesWhereChild.stream()
-			.map(xref -> families.get(xref))
+			.map(families::get)
 			.collect(toSet());
 	}
 	
 	@Override
 	public Collection<Family> familiesWhereSpouse() {
 		return familiesWhereSpouse.stream()
-				.map(xref -> families.get(xref))
+				.map(families::get)
 				.collect(toSet());
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("Person %s: %s", xref, name());
+		return String.format("%s (%d)", name(), id);
 	}
 
 	@Override
-	public int compareTo(Person other) {
-		return xref().compareTo(other.xref());
+	public int compareTo(Person o) {
+		GedcomPerson other = (GedcomPerson) o;
+		return Integer.compare(id, other.id);
 	}
 }

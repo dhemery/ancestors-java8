@@ -3,10 +3,14 @@ package com.dhemery.ancestors;
 import com.dhemery.ancestors.internal.GedcomFamilyTree;
 
 public class Ancestors {
+	private static final FamilyTree TREE = new GedcomFamilyTree();
+
 	public static void main(String[] args) {
-		FamilyTree tree = new GedcomFamilyTree();
-		tree.families().stream()
-			.sorted()
-			.forEach(person -> System.out.println(person));
+		for(Person person : TREE.people()) {
+			Name name = person.name();
+			if(name.prefix().isPresent()) {
+				System.out.println(name);
+			}
+		}
 	}
 }

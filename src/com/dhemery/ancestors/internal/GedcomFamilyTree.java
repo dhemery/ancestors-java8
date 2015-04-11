@@ -14,8 +14,8 @@ import com.dhemery.ancestors.FamilyTree;
 import com.dhemery.ancestors.Person;
 
 public class GedcomFamilyTree  implements FamilyTree {
-	private final Map<String,Person> people = new HashMap<>();
-	private final Map<String,Family> families = new HashMap<>();
+	private final Map<Integer,Person> peopleByID = new HashMap<>();
+	private final Map<Integer,Family> familiesByID = new HashMap<>();
 
 	public GedcomFamilyTree() {
 		Gedcom gedcom = loadGedcom();
@@ -25,17 +25,17 @@ public class GedcomFamilyTree  implements FamilyTree {
 
 	@Override
 	public Person dale() {
-		return people.get("@I139@");
+		return peopleByID.get("139");
 	}
-	
+
 	@Override
 	public Collection<Family> families() {
-		return families.values();
+		return familiesByID.values();
 	}
 
 	@Override
 	public Collection<Person> people() {
-		return people.values();
+		return peopleByID.values();
 	}
 
 	private static Gedcom loadGedcom() {
@@ -49,14 +49,12 @@ public class GedcomFamilyTree  implements FamilyTree {
 	}
 
 	private void loadFamilies(Gedcom gedcom) {
-		gedcom.families.values().stream()
-			.map(family -> new GedcomFamily(family, people))
-			.forEach(family -> families.put(family.xref(), family));
+		gedcom.families.values()
+			.forEach(family -> new GedcomFamily(family, familiesByID, peopleByID));
 	}
 
 	private void loadPeople(Gedcom gedcom) {
-		gedcom.individuals.values().stream()
-			.map(individual -> new GedcomPerson(individual, families))
-			.forEach(person -> people.put(person.xref(), person));
+		gedcom.individuals.values()
+			.forEach(individual -> new GedcomPerson(individual, peopleByID, familiesByID));
 	}
 }

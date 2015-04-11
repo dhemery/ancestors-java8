@@ -11,50 +11,57 @@ import com.dhemery.ancestors.Family;
 import com.dhemery.ancestors.Person;
 
 public class GedcomFamily implements Family {
-	private final Map<String, Person> people;
-	private final String xref;
-	private final Optional<String> husbandXref;
-	private final Optional<String> wifeXref;
-	private final Set<String> childXrefs;
+	private final Map<Integer, Person> people;
+	private final Integer id;
+	private final Optional<Integer> husbandID;
+	private final Optional<Integer> wifeID;
+	private final Set<Integer> childIDs;
 
-	public GedcomFamily(org.gedcom4j.model.Family family, Map<String, Person> people) {
+	public GedcomFamily(org.gedcom4j.model.Family family, Map<Integer, Family> families, Map<Integer, Person> people) {
 		this.people = people;
-		xref = family.xref;
-		husbandXref = Optional.ofNullable(family.husband).map(husband -> husband.xref);
-		wifeXref = Optional.ofNullable(family.wife).map(wife -> wife.xref);
-		childXrefs = family.children.stream().map(child -> child.xref).collect(toSet());
-	}
-
-	@Override
-	public String xref() {
-		return xref;
+		id = GedcomID.parse(family.xref);
+		husbandID = Optional.ofNullable(family.husband)
+						.map(husband -> husband.xref)
+						.map(GedcomID::parse);
+		wifeID = Optional.ofNullable(family.wife)
+						.map(wife -> wife.xref)
+						.map(GedcomID::parse);
+		childIDs = family.children.stream()
+						.map(child -> child.xref)
+						.map(GedcomID::parse)
+						.collect(toSet());
+		families.put(id, this);
 	}
 
 	@Override
 	public Optional<Person> husband() {
-		return husbandXref.map(xref -> people.get(xref));
+		return husbandID.map(people::get);
 	}
 
 	@Override
 	public Optional<Person> wife() {
-		return wifeXref.map(xref -> people.get(xref));
+		return wifeID.map(people::get);
 	}
 
 	@Override
 	public Collection<Person> children() {
-		return childXrefs.stream()
-				.map(xref -> people.get(xref))
+		return childIDs.stream()
+				.map(people::get)
 				.collect(toSet());
 	}
 
 	
 	@Override
 	public String toString() {
-		return String.format("Family %s: %s, %s", xref, husband(), wife());
+		return String.format("Family %d: %s and %s", id,
+								husband().map(Person::toString).orElse("UNKNOWN"),
+								wife().map(Person::toString).orElse("UNKNOWN")
+								);
 	}
 
 	@Override
-	public int compareTo(Family other) {
-		return xref().compareTo(other.xref());
+	public int compareTo(Family o) {
+		GedcomFamily other = (GedcomFamily) o;
+		return id.compareTo(other.id);
 	}
 }

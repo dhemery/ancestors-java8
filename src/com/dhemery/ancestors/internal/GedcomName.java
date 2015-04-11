@@ -1,25 +1,20 @@
 package com.dhemery.ancestors.internal;
 
 import java.util.Optional;
+import java.util.StringJoiner;
 
 import org.gedcom4j.model.PersonalName;
 
 import com.dhemery.ancestors.Name;
 
 public class GedcomName implements Name {
-	private String basicName;
 	private Optional<String> prefix;
-	private Optional<String> givenName;
-	private Optional<String> surnamePrefix;
-	private Optional<String> surname;
+	private String basic;
 	private Optional<String> suffix;
 
 	public GedcomName(PersonalName name) {
-		basicName = name.basic;
 		prefix = Optional.ofNullable(name.prefix).map(Object::toString);
-		givenName = Optional.ofNullable(name.givenName).map(Object::toString);
-		surnamePrefix = Optional.ofNullable(name.surnamePrefix).map(Object::toString);
-		surname = Optional.ofNullable(name.surname).map(Object::toString);
+		basic = name.basic;
 		suffix = Optional.ofNullable(name.suffix).map(Object::toString);
 	}
 
@@ -29,18 +24,8 @@ public class GedcomName implements Name {
 	}
 
 	@Override
-	public Optional<String> givenName() {
-		return givenName;
-	}
-
-	@Override
-	public Optional<String> surnamePrefix() {
-		return surnamePrefix;
-	}
-
-	@Override
-	public Optional<String> surname() {
-		return surname;
+	public String basic() {
+		return basic;
 	}
 
 	@Override
@@ -50,6 +35,15 @@ public class GedcomName implements Name {
 
 	@Override
 	public String toString() {
-		return basicName;
+		StringJoiner joiner = new StringJoiner(" ");
+		prefix.ifPresent(joiner::add);
+		joiner.add(basic);
+		suffix.ifPresent(joiner::add);
+		return joiner.toString();
+	}
+
+	@Override
+	public int compareTo(Name o) {
+		return toString().compareTo(o.toString());
 	}
 }
