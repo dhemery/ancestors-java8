@@ -1,5 +1,6 @@
 package com.dhemery.ancestors.internal;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,17 +39,21 @@ public class GedcomFamilyTree  implements FamilyTree {
 		return peopleByID.values();
 	}
 
-	private static Gedcom loadGedcom() {
+	private Gedcom loadGedcom() {
 		GedcomParser parser = new GedcomParser();
 		try {
-			parser.load("data/ancestors.ged");
+            parser.load(gedcomStream());
 		} catch (IOException | GedcomParserException cause) {
 			throw new RuntimeException(cause);
 		}
 		return parser.gedcom;
 	}
 
-	private void loadFamilies(Gedcom gedcom) {
+    private BufferedInputStream gedcomStream() {
+        return new BufferedInputStream(getClass().getResourceAsStream("/ancestors.ged"));
+    }
+
+    private void loadFamilies(Gedcom gedcom) {
 		gedcom.families.values()
 			.forEach(family -> new GedcomFamily(family, familiesByID, peopleByID));
 	}
