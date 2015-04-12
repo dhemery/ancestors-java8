@@ -1,17 +1,16 @@
 package com.dhemery.ancestors.internal;
 
-import static java.util.stream.Collectors.toSet;
+import com.dhemery.ancestors.Family;
+import com.dhemery.ancestors.Name;
+import com.dhemery.ancestors.Person;
+import com.dhemery.ancestors.Sex;
+import org.gedcom4j.model.Individual;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-import com.dhemery.ancestors.Sex;
-import org.gedcom4j.model.Individual;
-
-import com.dhemery.ancestors.Family;
-import com.dhemery.ancestors.Name;
-import com.dhemery.ancestors.Person;
+import static java.util.stream.Collectors.toSet;
 
 public class GedcomPerson implements Person {
 	private final Map<Integer, Family> families;
@@ -37,8 +36,7 @@ public class GedcomPerson implements Person {
 			.map(family -> family.xref)
 			.map(GedcomID::parse)
 			.collect(toSet());
-        sex = Optional.ofNullable(individual.sex)
-                .map(s -> s.value.equals("F") ? Sex.FEMALE : Sex.MALE);
+		sex = Optional.ofNullable(individual.sex).map(Object::toString).flatMap(Sex::withInitial);
 		people.put(id, this);
 	}
 
