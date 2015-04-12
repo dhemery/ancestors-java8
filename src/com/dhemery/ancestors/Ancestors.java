@@ -6,11 +6,10 @@ public class Ancestors {
 	private static final FamilyTree TREE = new GedcomFamilyTree();
 
 	public static void main(String[] args) {
-		for(Person person : TREE.people()) {
-			Name name = person.name();
-			if(name.prefix().isPresent()) {
-				System.out.println(name);
-			}
-		}
-	}
+        for (Person person : TREE.people()) {
+            if (person.name().full().contains("/Emery/")) {
+                System.out.println(person.name().full());
+            }
+        }
+    }
 }

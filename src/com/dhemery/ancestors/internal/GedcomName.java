@@ -24,8 +24,12 @@ public class GedcomName implements Name {
 	}
 
 	@Override
-	public String basic() {
-		return basic;
+	public String full() {
+        StringJoiner joiner = new StringJoiner(" ");
+        prefix.ifPresent(joiner::add);
+        joiner.add(basic);
+        suffix.ifPresent(joiner::add);
+        return joiner.toString();
 	}
 
 	@Override
@@ -35,15 +39,11 @@ public class GedcomName implements Name {
 
 	@Override
 	public String toString() {
-		StringJoiner joiner = new StringJoiner(" ");
-		prefix.ifPresent(joiner::add);
-		joiner.add(basic);
-		suffix.ifPresent(joiner::add);
-		return joiner.toString();
+        return basic;
 	}
 
 	@Override
-	public int compareTo(Name o) {
-		return toString().compareTo(o.toString());
+	public int compareTo(Name other) {
+		return this.full().compareTo(other.full());
 	}
 }

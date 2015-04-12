@@ -4,7 +4,9 @@ import static java.util.stream.Collectors.toSet;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
+import com.dhemery.ancestors.Sex;
 import org.gedcom4j.model.Individual;
 
 import com.dhemery.ancestors.Family;
@@ -17,10 +19,14 @@ public class GedcomPerson implements Person {
 	private final Collection<Integer> familiesWhereChild;
 	private final Collection<Integer> familiesWhereSpouse;
 	private final Name name;
+    private final Optional<Sex> sex;
 
-	public GedcomPerson(Individual individual, Map<Integer, Person> people, Map<Integer, Family> families) {
+    public GedcomPerson(Individual individual, Map<Integer, Person> people, Map<Integer, Family> families) {
 		this.families = families;
 		id = GedcomID.parse(individual.xref);
+		name = individual.names.stream()
+			.findFirst()
+			.map(GedcomName::new).get();
 		familiesWhereChild = individual.familiesWhereChild.stream()
 			.map(childFamily -> childFamily.family)
 			.map(family -> family.xref)
@@ -31,9 +37,8 @@ public class GedcomPerson implements Person {
 			.map(family -> family.xref)
 			.map(GedcomID::parse)
 			.collect(toSet());
-		name = individual.names.stream()
-			.findFirst()
-			.map(GedcomName::new).get();
+        sex = Optional.ofNullable(individual.sex)
+                .map(s -> s.value.equals("F") ? Sex.FEMALE : Sex.MALE);
 		people.put(id, this);
 	}
 
@@ -42,7 +47,12 @@ public class GedcomPerson implements Person {
 		return name;
 	}
 
-	@Override
+    @Override
+    public Optional<Sex> sex() {
+        return sex;
+    }
+
+    @Override
 	public Collection<Family> familiesWhereChild() {
 		return familiesWhereChild.stream()
 			.map(families::get)

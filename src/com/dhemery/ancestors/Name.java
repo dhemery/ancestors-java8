@@ -3,7 +3,7 @@ package com.dhemery.ancestors;
 import java.util.Optional;
 
 public interface Name extends Comparable<Name> {
+	String full();
 	Optional<String> prefix();
-	String basic();
 	Optional<String> suffix();
 }
