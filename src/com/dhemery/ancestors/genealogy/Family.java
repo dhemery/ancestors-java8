@@ -11,7 +11,7 @@ public interface Family extends Identifiable {
 	Optional<Person> wife();
 	Collection<Person> children();
 
-	default Collection<Person> parents() {
+	default Collection<Person> spouses() {
 		return Stream.of(husband(), wife())
 				.filter(Optional::isPresent)
 				.map(Optional::get).collect(toSet());

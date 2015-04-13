@@ -13,7 +13,7 @@ public interface Person extends Identifiable {
 
 	default Collection<Person> parents() {
 		return familyOfOrigin()
-				.map(Family::parents)
+				.map(Family::spouses)
 				.orElse(Collections.emptySet());
 	}
 }
