@@ -14,7 +14,6 @@ public class GedcomFamilyTree  implements FamilyTree {
 	private final Map<Integer,Family> familiesByID = new HashMap<>();
 
 	public GedcomFamilyTree(Gedcom gedcom) {
-
 		loadPeople(gedcom);
 		loadFamilies(gedcom);
 	}

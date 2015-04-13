@@ -1,20 +1,32 @@
 package com.dhemery.ancestors.gedcom;
 
-import java.util.Optional;
-import java.util.StringJoiner;
-
+import com.dhemery.ancestors.genealogy.Name;
 import org.gedcom4j.model.PersonalName;
 
-import com.dhemery.ancestors.genealogy.Name;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.partitioningBy;
 
 public class GedcomName implements Name {
+	private static final Predicate<String> IS_SURNAME = Pattern.compile("/(.*)/").asPredicate();
+	private static final Pattern NAME_PARTS = Pattern.compile(" ");
 	private Optional<String> prefix;
-	private String basic;
+	private List<String> given;
+	private Optional<String> surname;
 	private Optional<String> suffix;
 
 	public GedcomName(PersonalName name) {
 		prefix = Optional.ofNullable(name.prefix).map(Object::toString);
-		basic = name.basic;
+		Map<Boolean, List<String>> nameParts = NAME_PARTS.splitAsStream(name.basic)
+				.collect(partitioningBy(IS_SURNAME));
+		given = nameParts.get(false);
+		surname = nameParts.get(true).stream()
+				.findFirst()
+				.map(s -> s.substring(1, s.length()-1));
 		suffix = Optional.ofNullable(name.suffix).map(Object::toString);
 	}
 
@@ -24,12 +36,13 @@ public class GedcomName implements Name {
 	}
 
 	@Override
-	public String simple() {
-        StringJoiner joiner = new StringJoiner(" ");
-        prefix.ifPresent(joiner::add);
-        joiner.add(basic);
-        suffix.ifPresent(joiner::add);
-        return joiner.toString();
+	public List<String> given() {
+		return given;
+	}
+
+	@Override
+	public Optional<String> surname() {
+		return surname;
 	}
 
 	@Override
@@ -39,11 +52,6 @@ public class GedcomName implements Name {
 
 	@Override
 	public String toString() {
-        return basic;
-	}
-
-	@Override
-	public int compareTo(Name other) {
-		return this.simple().compareTo(other.simple());
+		return full();
 	}
 }

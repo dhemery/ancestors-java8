@@ -60,6 +60,22 @@ public class GedcomFamily implements Family {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		GedcomFamily that = (GedcomFamily) o;
+
+		return id.equals(that.id);
+
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+
+	@Override
 	public int compareTo(Family o) {
 		GedcomFamily other = (GedcomFamily) o;
 		return id.compareTo(other.id);
