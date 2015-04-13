@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GedcomFamilyTree  implements FamilyTree {
+	public static final int DALE_ID = 139;
 	private final Map<Integer,Person> peopleByID = new HashMap<>();
 	private final Map<Integer,Family> familiesByID = new HashMap<>();
 
@@ -20,7 +21,7 @@ public class GedcomFamilyTree  implements FamilyTree {
 
 	@Override
 	public Person dale() {
-		return peopleByID.get(139);
+		return peopleByID.get(DALE_ID);
 	}
 
 	@Override

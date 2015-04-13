@@ -1,14 +1,14 @@
 package com.dhemery.ancestors.gedcom;
 
-import static java.util.stream.Collectors.toSet;
+import com.dhemery.ancestors.genealogy.Family;
+import com.dhemery.ancestors.genealogy.Person;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.dhemery.ancestors.genealogy.Family;
-import com.dhemery.ancestors.genealogy.Person;
+import static java.util.stream.Collectors.toSet;
 
 public class GedcomFamily implements Family {
 	private final Map<Integer, Person> people;
@@ -54,9 +54,9 @@ public class GedcomFamily implements Family {
 	@Override
 	public String toString() {
 		return String.format("Family %d: %s and %s", id,
-								husband().map(Person::toString).orElse("UNKNOWN"),
-								wife().map(Person::toString).orElse("UNKNOWN")
-								);
+				husband().map(Person::toString).orElse("UNKNOWN"),
+				wife().map(Person::toString).orElse("UNKNOWN")
+		);
 	}
 
 	@Override
@@ -73,11 +73,5 @@ public class GedcomFamily implements Family {
 	@Override
 	public int hashCode() {
 		return id.hashCode();
-	}
-
-	@Override
-	public int compareTo(Family o) {
-		GedcomFamily other = (GedcomFamily) o;
-		return id.compareTo(other.id);
 	}
 }

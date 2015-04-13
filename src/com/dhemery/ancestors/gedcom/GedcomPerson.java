@@ -66,10 +66,4 @@ public class GedcomPerson implements Person {
 	public String toString() {
 		return String.format("%s (%d)", name(), id);
 	}
-
-	@Override
-	public int compareTo(Person o) {
-		GedcomPerson other = (GedcomPerson) o;
-		return Integer.compare(id, other.id);
-	}
 }

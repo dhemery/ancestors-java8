@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
 
-public interface Name extends Comparable<Name> {
+public interface Name {
 	Optional<String> prefix();
 	List<String> given();
 	Optional<String> surname();
@@ -23,10 +23,5 @@ public interface Name extends Comparable<Name> {
 		joiner.add(simple());
 		suffix().ifPresent(joiner::add);
 		return joiner.toString();
-	}
-
-	@Override
-	default int compareTo(Name other) {
-		return this.toString().compareTo(other.toString());
 	}
 }
