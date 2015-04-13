@@ -2,9 +2,18 @@ package com.dhemery.ancestors.genealogy;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-public interface Family {
+import static java.util.stream.Collectors.toSet;
+
+public interface Family extends Identifiable {
 	Optional<Person> husband();
 	Optional<Person> wife();
 	Collection<Person> children();
+
+	default Collection<Person> parents() {
+		return Stream.of(husband(), wife())
+				.filter(Optional::isPresent)
+				.map(Optional::get).collect(toSet());
+	}
 }

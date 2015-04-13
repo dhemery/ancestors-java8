@@ -11,8 +11,8 @@ import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 
 public class GedcomFamily implements Family {
+	private final int id;
 	private final Map<Integer, Person> people;
-	private final Integer id;
 	private final Optional<Integer> husbandID;
 	private final Optional<Integer> wifeID;
 	private final Set<Integer> childIDs;
@@ -31,6 +31,11 @@ public class GedcomFamily implements Family {
 						.map(GedcomID::parse)
 						.collect(toSet());
 		families.put(id, this);
+	}
+
+	@Override
+	public int id() {
+		return id;
 	}
 
 	@Override
@@ -66,12 +71,13 @@ public class GedcomFamily implements Family {
 
 		GedcomFamily that = (GedcomFamily) o;
 
-		return id.equals(that.id);
+		return id == that.id;
 
 	}
 
 	@Override
 	public int hashCode() {
-		return id.hashCode();
+		return id;
 	}
 }
+

@@ -41,6 +41,11 @@ public class GedcomPerson implements Person {
 	}
 
 	@Override
+	public int id() {
+		return id;
+	}
+
+	@Override
 	public Name name() {
 		return name;
 	}
@@ -61,7 +66,23 @@ public class GedcomPerson implements Person {
 				.map(families::get)
 				.collect(toSet());
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		GedcomPerson that = (GedcomPerson) o;
+
+		return id == that.id;
+
+	}
+
+	@Override
+	public int hashCode() {
+		return id;
+	}
+
 	@Override
 	public String toString() {
 		return String.format("%s (%d)", name(), id);
