@@ -1,4 +1,4 @@
-package com.dhemery.ancestors.internal;
+package com.dhemery.ancestors.gedcom;
 
 
 public class GedcomID {

@@ -1,11 +1,11 @@
-package com.dhemery.ancestors.internal;
+package com.dhemery.ancestors.gedcom;
 
 import java.util.Optional;
 import java.util.StringJoiner;
 
 import org.gedcom4j.model.PersonalName;
 
-import com.dhemery.ancestors.Name;
+import com.dhemery.ancestors.genealogy.Name;
 
 public class GedcomName implements Name {
 	private Optional<String> prefix;
@@ -24,7 +24,7 @@ public class GedcomName implements Name {
 	}
 
 	@Override
-	public String full() {
+	public String simple() {
         StringJoiner joiner = new StringJoiner(" ");
         prefix.ifPresent(joiner::add);
         joiner.add(basic);
@@ -44,6 +44,6 @@ public class GedcomName implements Name {
 
 	@Override
 	public int compareTo(Name other) {
-		return this.full().compareTo(other.full());
+		return this.simple().compareTo(other.simple());
 	}
 }

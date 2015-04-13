@@ -1,4 +1,4 @@
-package com.dhemery.ancestors;
+package com.dhemery.ancestors.genealogy;
 
 import java.util.Arrays;
 import java.util.Optional;

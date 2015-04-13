@@ -1,4 +1,4 @@
-package com.dhemery.ancestors.internal;
+package com.dhemery.ancestors.gedcom;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.dhemery.ancestors.Family;
-import com.dhemery.ancestors.Person;
+import com.dhemery.ancestors.genealogy.Family;
+import com.dhemery.ancestors.genealogy.Person;
 
 public class GedcomFamily implements Family {
 	private final Map<Integer, Person> people;

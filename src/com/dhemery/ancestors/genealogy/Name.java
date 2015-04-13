@@ -1,9 +1,9 @@
-package com.dhemery.ancestors;
+package com.dhemery.ancestors.genealogy;
 
 import java.util.Optional;
 
 public interface Name extends Comparable<Name> {
-	String full();
+	String simple();
 	Optional<String> prefix();
 	Optional<String> suffix();
 }
