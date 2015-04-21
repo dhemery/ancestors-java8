@@ -7,9 +7,11 @@ import java.util.Optional;
 
 public interface Person extends Identifiable {
 	Name name();
-    Optional<Sex> sex();
 	Optional<Family> familyOfOrigin();
+	Optional<Event> birth();
+	Optional<Sex> sex();
 	Collection<Family> familiesWhereSpouse();
+	Optional<Event> death();
 
 	default Collection<Person> parents() {
 		return familyOfOrigin()

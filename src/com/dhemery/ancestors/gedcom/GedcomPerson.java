@@ -1,26 +1,26 @@
 package com.dhemery.ancestors.gedcom;
 
-import com.dhemery.ancestors.genealogy.Family;
-import com.dhemery.ancestors.genealogy.Name;
-import com.dhemery.ancestors.genealogy.Person;
-import com.dhemery.ancestors.genealogy.Sex;
+import com.dhemery.ancestors.genealogy.*;
 import org.gedcom4j.model.Individual;
+import org.gedcom4j.model.IndividualEventType;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
 
 public class GedcomPerson implements Person {
+	private static final List<IndividualEventType> INTERESTING_EVENTS = Arrays.asList(IndividualEventType.BIRTH, IndividualEventType.DEATH);
 	private final Map<Integer, Family> families;
 	private final int id;
 	private final Optional<Integer> familyOfOrigin;
 	private final Collection<Integer> familiesWhereSpouse;
 	private final Name name;
     private final Optional<Sex> sex;
+	private final Optional<Event> birth;
+	private final Optional<Event> death;
 
-    public GedcomPerson(Individual individual, Map<Integer, Person> people, Map<Integer, Family> families) {
+	public GedcomPerson(Individual individual, Map<Integer, Person> people, Map<Integer, Family> families) {
 		this.families = families;
 		id = GedcomID.parse(individual.xref);
 		name = individual.names.stream()
@@ -37,23 +37,24 @@ public class GedcomPerson implements Person {
 				.map(GedcomID::parse)
 				.collect(toSet());
 		sex = Optional.ofNullable(individual.sex).map(Object::toString).flatMap(Sex::withInitial);
+		birth = individual.events.stream()
+				.filter(e -> e.type == IndividualEventType.BIRTH)
+				.findFirst()
+				.map(GedcomEvent::new);
+		death = individual.events.stream()
+				.filter(e -> e.type == IndividualEventType.DEATH)
+				.findFirst()
+				.map(GedcomEvent::new);
 		people.put(id, this);
 	}
 
-	@Override
-	public int id() {
-		return id;
-	}
+	@Override  public int id() { return id; }
 
-	@Override
-	public Name name() {
-		return name;
-	}
+	@Override  public Name name() { return name; }
+	@Override  public Optional<Event> birth() { return birth; }
+	@Override  public Optional<Event> death() { return death; }
 
-    @Override
-    public Optional<Sex> sex() {
-        return sex;
-    }
+    @Override  public Optional<Sex> sex() { return sex; }
 
     @Override
 	public Optional<Family> familyOfOrigin() {
@@ -85,6 +86,11 @@ public class GedcomPerson implements Person {
 
 	@Override
 	public String toString() {
-		return String.format("%s (%d)", name(), id);
+		StringJoiner out = new StringJoiner(" ")
+				.add(String.valueOf(name()))
+				.add(format("(%s)", id));
+		birth.flatMap(Event::date).ifPresent(b -> out.add(format("b.%s", b)));
+		death.flatMap(Event::date).ifPresent(d -> out.add(format("d.%s", d)));
+		return out.toString();
 	}
 }
