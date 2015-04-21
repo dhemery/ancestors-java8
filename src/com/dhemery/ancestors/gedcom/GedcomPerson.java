@@ -4,13 +4,15 @@ import com.dhemery.ancestors.genealogy.*;
 import org.gedcom4j.model.Individual;
 import org.gedcom4j.model.IndividualEventType;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import java.util.StringJoiner;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
 
 public class GedcomPerson implements Person {
-	private static final List<IndividualEventType> INTERESTING_EVENTS = Arrays.asList(IndividualEventType.BIRTH, IndividualEventType.DEATH);
 	private final Map<Integer, Family> families;
 	private final int id;
 	private final Optional<Integer> familyOfOrigin;
@@ -88,9 +90,9 @@ public class GedcomPerson implements Person {
 	public String toString() {
 		StringJoiner out = new StringJoiner(" ")
 				.add(String.valueOf(name()))
-				.add(format("(%s)", id));
-		birth.flatMap(Event::date).ifPresent(b -> out.add(format("b.%s", b)));
-		death.flatMap(Event::date).ifPresent(d -> out.add(format("d.%s", d)));
+				.add(format("(P%d)", id));
+		birth.map(Object::toString).ifPresent(out::add);
+		death.map(Object::toString).ifPresent(out::add);
 		return out.toString();
 	}
 }

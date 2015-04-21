@@ -1,6 +1,7 @@
 package com.dhemery.ancestors.gedcom;
 
 import com.dhemery.ancestors.genealogy.Event;
+import org.gedcom4j.model.FamilyEvent;
 import org.gedcom4j.model.IndividualEvent;
 import org.gedcom4j.model.IndividualEventType;
 
@@ -15,6 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static java.lang.String.format;
+
 public class GedcomEvent implements Event {
     private static final String DATE_PATTERN = "[['ABT']['AFT']['BEF']['BET'] ][[d ]MMM ][u]";
     private static final DateTimeFormatter DATE_PARSER = dateParser();
@@ -26,12 +29,19 @@ public class GedcomEvent implements Event {
     private final Type type;
 
     public GedcomEvent(IndividualEvent event) {
+        this(event, TYPE_MAP.get(event.type));
+    }
+
+    public GedcomEvent(FamilyEvent event) {
+        this(event, Type.MARRIAGE);
+    }
+
+    private GedcomEvent(org.gedcom4j.model.Event event, Type type) {
         date = Optional.ofNullable(event.date)
                 .flatMap(d -> Optional.ofNullable(d.value))
                 .map(toDate);
-        type = TYPE_MAP.get(event.type);
+        this.type = type;
     }
-
 
     @Override  public Optional<LocalDate> date() { return date; }
     @Override  public Type type() { return type; }
@@ -52,5 +62,10 @@ public class GedcomEvent implements Event {
         map.put(IndividualEventType.BIRTH, Type.BIRTH);
         map.put(IndividualEventType.DEATH, Type.DEATH);
         return map;
+    }
+
+    @Override
+    public String toString() {
+        return format("%s.%s", type.toString().toLowerCase().charAt(0), date.map(Object::toString).orElse("UNKNOWN"));
     }
 }
