@@ -7,7 +7,6 @@ import org.gedcom4j.model.IndividualEventType;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import java.util.StringJoiner;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
@@ -88,11 +87,6 @@ public class GedcomPerson implements Person {
 
 	@Override
 	public String toString() {
-		StringJoiner out = new StringJoiner(" ")
-				.add(String.valueOf(name()))
-				.add(format("(P%d)", id));
-		birth.map(Object::toString).ifPresent(out::add);
-		death.map(Object::toString).ifPresent(out::add);
-		return out.toString();
+		return format("%s (%s)", name, id);
 	}
 }

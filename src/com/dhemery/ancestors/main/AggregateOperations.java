@@ -4,6 +4,6 @@ import static com.dhemery.ancestors.gedcom.GedcomLoader.TREE;
 
 public class AggregateOperations {
     public static void main(String[] ignored) {
-        TREE.people().forEach(System.out::println);
+        TREE.families().forEach(System.out::println);
     }
 }
